@@ -23,7 +23,7 @@ void print_path(vector<string>& path, string fc = "")
       path_name += "]";
    }
 
-   cout << path_name << endl;
+   std::cout << path_name << std::endl;
 }
 
 SCL::tDataTypeTemplates::LNodeType_const_iterator
@@ -242,7 +242,7 @@ int main(int argc, char* argv[])
    string file_name;
 
    if (argc != 2) {
-      cout << "usage: 'sclparser scl_filename' " << endl;
+      std::cout << "usage: 'sclparser scl_filename' " << std::endl;
       return 1;
    }
    else{
@@ -253,30 +253,30 @@ int main(int argc, char* argv[])
    {
       auto_ptr<SCL::SCL> scl(SCL::SCL_(file_name, xml_schema::flags::dont_validate));
 
-      //cout << scl->Header().id() << endl;
-      //cout << scl->Header().nameStructure() << endl;
+      //std::cout << scl->Header().id() << std::endl;
+      //std::cout << scl->Header().nameStructure() << std::endl;
 
       SCL::tCommunication::SubNetwork_const_iterator it = scl->Communication()->SubNetwork().begin();
       for (; it != scl->Communication()->SubNetwork().end(); it++) {
          string n = it->name();
 
          for (SCL::tSubNetwork::ConnectedAP_const_iterator i = it->ConnectedAP().begin(); i != it->ConnectedAP().end(); i++) {
-            //cout << "apName : " << i->apName() << endl;
-            //cout << "iedName: " << i->iedName() << endl;
+            //std::cout << "apName : " << i->apName() << std::endl;
+            //std::cout << "iedName: " << i->iedName() << std::endl;
 
-            cout << "Address" << endl;
+            std::cout << "Address" << std::endl;
             SCL::tAddress::P_const_iterator piter = i->Address().get().P().begin();
             for (; piter != i->Address().get().P().end(); piter++) {
-               cout << "-" << piter->type() << ": " << piter->data() << endl;
+               std::cout << "-" << piter->type() << ": " << piter->data() << std::endl;
             }
 
             for (SCL::tConnectedAP::GSE_const_iterator it = i->GSE().begin(); it != i->GSE().end(); it++) {
                string ldinst = it->ldInst();
                string cbname = it->cbName();
 
-               cout << "GSE: " << ldinst << ";" << cbname << endl;
+               std::cout << "GSE: " << ldinst << ";" << cbname << std::endl;
                for (SCL::tAddress::P_const_iterator piter = it->Address().get().P().begin(); piter != it->Address().get().P().end(); piter++) {
-                  cout << "-" << piter->type() << ": " << piter->data() << endl;
+                  std::cout << "-" << piter->type() << ": " << piter->data() << std::endl;
                }
             }
          }
@@ -286,16 +286,16 @@ int main(int argc, char* argv[])
 
          SCL::tIED ied = ((SCL::tIED) * i);
 
-         cout << "--------------DEVICE------------------" << endl;
-         cout << "  name        : " << ied.name() << endl;
-         cout << "  manufacturer:" << ied.manufacturer() << endl;
-         cout << "  desc        : " << ied.desc() << endl;
-         cout << "  type        : " << ied.type() << endl;
+         std::cout << "--------------DEVICE------------------" << std::endl;
+         std::cout << "  name        : " << ied.name() << std::endl;
+         std::cout << "  manufacturer:" << ied.manufacturer() << std::endl;
+         std::cout << "  desc        : " << ied.desc() << std::endl;
+         std::cout << "  type        : " << ied.type() << std::endl;
 
          SCL::tIED::AccessPoint_const_iterator ap = SCL::tIED::AccessPoint_const_iterator(ied.AccessPoint().begin());
          for ( ; ap != ied.AccessPoint().end(); ap++)
          {
-            //cout << "access point: " << ap->name() << endl;
+            //std::cout << "access point: " << ap->name() << std::endl;
 
             SCL::tServer::LDevice_sequence devList = ap->Server().get().LDevice();
             SCL::tServer::LDevice_const_iterator dev = devList.begin();
@@ -305,20 +305,20 @@ int main(int argc, char* argv[])
 
                vector<string> path;
 
-               cout << "LD: " << ldName << endl;
+               std::cout << "LD: " << ldName << std::endl;
 
                //parse dataset
                SCL::tAnyLN::DataSet_sequence dsList = dev->LN0().DataSet();
                SCL::tAnyLN::DataSet_const_iterator ds = dsList.begin();
                for (; ds != dsList.end(); ds++) {
-                  cout << "+dataset: " << ds->name() << endl;
+                  std::cout << "+dataset: " << ds->name() << std::endl;
                }
 
                //parse report control block
                SCL::tAnyLN::ReportControl_sequence rpList = dev->LN0().ReportControl();
                SCL::tAnyLN::ReportControl_const_iterator rp = rpList.begin();
                for (; rp != rpList.end(); rp++) {
-                  cout << "+report: " << rp->name() << " dataset: " << rp->datSet() << endl;
+                  std::cout << "+report: " << rp->name() << " dataset: " << rp->datSet() << std::endl;
                }
                
                SCL::tAccessPoint::LN_sequence lnList = dev->LN();
@@ -333,7 +333,7 @@ int main(int argc, char* argv[])
    }
    catch (const xml_schema::exception& e)
    {
-      cerr << e << endl;
+      std::cerr << e << std::endl;
       return 1;
    }
 
