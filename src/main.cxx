@@ -10,7 +10,7 @@ void print_path(vector<string>& path, string fc = "")
 
    int i = 0;
    path_name = path[i++];
-   while(i<path.size()){
+   while(i < path.size()){
       if (i == 1)
          path_name += "/";
       else
@@ -73,7 +73,6 @@ void parseBDA(auto_ptr<SCL::SCL>& scl, string fc, SCL::tDAType::BDA_sequence& bd
 
       path.push_back(name);
       print_path(path,fc);
-      //cout << "-----BDA: " << name << "[" << fc << "]" << endl;
 
       if (btype == "Struct") {
 
@@ -106,7 +105,6 @@ void parseDA(auto_ptr<SCL::SCL>& scl, SCL::tDOType::DA_sequence & daList, vector
       
       path.push_back(name);
       print_path(path,fc);
-      //cout << "----DA: " << name << "[" << fc << "]" << endl;
 
       if (da->type().present()) {
          string type = da->type().get();
@@ -126,7 +124,6 @@ void parseDA(auto_ptr<SCL::SCL>& scl, SCL::tDOType::DA_sequence & daList, vector
 
                   path.push_back(vector);
                   print_path(path,fc);
-                  //cout << "-----" << "[" << i << "]" << endl;
 
                   parseBDA(scl, fc, bdaList, path);
 
@@ -154,7 +151,6 @@ void parseSDO(auto_ptr<SCL::SCL>& scl, SCL::tDOType::SDO_sequence& sdoList, vect
       string type = dot->type();
       
       path.push_back(name);
-      //cout << "---SDO: " << name << ";" << type << endl;
       print_path(path);
 
       SCL::tDataTypeTemplates::DOType_const_iterator dotype;
@@ -179,7 +175,6 @@ void parseDO(auto_ptr<SCL::SCL>& scl, SCL::tLNodeType::DO_sequence & doList, vec
 
       path.push_back(name);
 
-      //cout << "--DO: " << name << endl; // ";" << type << endl;
       print_path(path);
 
       SCL::tDataTypeTemplates::DOType_const_iterator dotype;
@@ -256,13 +251,13 @@ int main(int argc, char* argv[])
 
    try
    {
-      // Instantiate a SCL object from XML file
       auto_ptr<SCL::SCL> scl(SCL::SCL_(file_name, xml_schema::flags::dont_validate));
 
       //cout << scl->Header().id() << endl;
       //cout << scl->Header().nameStructure() << endl;
 
-      for (SCL::tCommunication::SubNetwork_const_iterator it = scl->Communication()->SubNetwork().begin(); it != scl->Communication()->SubNetwork().end(); it++) {
+      SCL::tCommunication::SubNetwork_const_iterator it = scl->Communication()->SubNetwork().begin();
+      for (; it != scl->Communication()->SubNetwork().end(); it++) {
          string n = it->name();
 
          for (SCL::tSubNetwork::ConnectedAP_const_iterator i = it->ConnectedAP().begin(); i != it->ConnectedAP().end(); i++) {
@@ -287,7 +282,6 @@ int main(int argc, char* argv[])
          }
       }
 
-      // iterate over all IEDs (<IED> elements) and print out some information about them
       for (SCL::SCL::IED_const_iterator i(scl->IED().begin()); i != scl->IED().end(); i++) {
 
          SCL::tIED ied = ((SCL::tIED) * i);
@@ -312,7 +306,6 @@ int main(int argc, char* argv[])
                vector<string> path;
 
                cout << "LD: " << ldName << endl;
-               //cout << "ln type: " << dev->LN0().lnType() << " lnclass: " << dev->LN0().lnClass() << endl;
 
                //parse dataset
                SCL::tAnyLN::DataSet_sequence dsList = dev->LN0().DataSet();
