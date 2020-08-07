@@ -1,15 +1,8 @@
 #include <iostream>
 #include <SCL.hxx>
 #include <SCL_IED.hxx>
-#include <vector>
-#include <unordered_map>
-#include <map>
-#include <list>
 
 using namespace std;
-
-vector<string> tags;
-
 
 void print_path(vector<string>& path, string fc = "") 
 {
@@ -30,11 +23,7 @@ void print_path(vector<string>& path, string fc = "")
       path_name += "]";
    }
 
-   //tags[path_name] = 0.0;
-   tags.push_back(path_name);
-
-
-   //cout << path_name << endl;
+   cout << path_name << endl;
 }
 
 SCL::tDataTypeTemplates::LNodeType_const_iterator
@@ -355,8 +344,4 @@ int main(int argc, char* argv[])
       return 1;
    }
 
-   for (auto it = tags.begin(); it != tags.end(); it++) {
-      string path = *it;
-      cout << path << endl;
-   }
 }
