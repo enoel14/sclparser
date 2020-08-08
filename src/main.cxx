@@ -26,11 +26,9 @@ void print_path(vector<string>& path, string fc = "")
    std::cout << path_name << std::endl;
 }
 
-SCL::tDataTypeTemplates::LNodeType_const_iterator
-findLNodeType(SCL::tDataTypeTemplates::LNodeType_sequence &l, string name)
+auto findLNodeType(SCL::tDataTypeTemplates::LNodeType_sequence &l, string name)
 {
-   SCL::tDataTypeTemplates::LNodeType_const_iterator ln = l.begin();
-   for (; ln != l.end(); ln++) {
+   for (auto ln = l.begin(); ln != l.end(); ln++) {
       string id = ln->id();
       if (id == name) 
          return ln;
@@ -39,11 +37,9 @@ findLNodeType(SCL::tDataTypeTemplates::LNodeType_sequence &l, string name)
    return l.end();
 }
 
-SCL::tDataTypeTemplates::DOType_const_iterator
-findDOType(SCL::tDataTypeTemplates::DOType_sequence& l, string name)
+auto findDOType(SCL::tDataTypeTemplates::DOType_sequence& l, string name)
 {
-   SCL::tDataTypeTemplates::DOType_const_iterator ln = l.begin();
-   for (; ln != l.end(); ln++) {
+   for (auto ln = l.begin(); ln != l.end(); ln++) {
       string id = ln->id();
       if (id == name) return ln;
    }
@@ -51,11 +47,9 @@ findDOType(SCL::tDataTypeTemplates::DOType_sequence& l, string name)
    return l.end();
 }
 
-SCL::tDataTypeTemplates::DAType_const_iterator
-findDAType(SCL::tDataTypeTemplates::DAType_sequence& l, string name)
+auto findDAType(SCL::tDataTypeTemplates::DAType_sequence& l, string name)
 {
-   SCL::tDataTypeTemplates::DAType_const_iterator ln = l.begin();
-   for (; ln != l.end(); ln++) {
+   for (auto ln = l.begin(); ln != l.end(); ln++) {
       string id = ln->id();
       if (id == name) return ln;
    }
@@ -65,9 +59,9 @@ findDAType(SCL::tDataTypeTemplates::DAType_sequence& l, string name)
 
 void parseBDA(auto_ptr<SCL::SCL>& scl, string fc, SCL::tDAType::BDA_sequence& bdaList, vector<string> &path)
 {
-   SCL::tDataTypeTemplates::DAType_sequence daTemplateList = scl->DataTypeTemplates().get().DAType();
+   auto daTemplateList = scl->DataTypeTemplates().get().DAType();
 
-   for (SCL::tDAType::BDA_const_iterator bda = bdaList.begin(); bda != bdaList.end(); bda++) {
+   for (auto bda = bdaList.begin(); bda != bdaList.end(); bda++) {
       string name = bda->name();
       string btype = bda->bType();
 
@@ -79,11 +73,10 @@ void parseBDA(auto_ptr<SCL::SCL>& scl, string fc, SCL::tDAType::BDA_sequence& bd
          if (bda->type().present()) {
             string type = bda->type().get();
 
-            SCL::tDataTypeTemplates::DAType_const_iterator datype;
-            datype = findDAType(daTemplateList, type);
+            auto datype = findDAType(daTemplateList, type);
             if (datype != daTemplateList.end()) {
 
-               SCL::tDAType::BDA_sequence bdaList = datype->BDA();
+               auto bdaList = datype->BDA();
                parseBDA(scl, fc, bdaList, path);
             }
          }
@@ -95,9 +88,9 @@ void parseBDA(auto_ptr<SCL::SCL>& scl, string fc, SCL::tDAType::BDA_sequence& bd
 
 void parseDA(auto_ptr<SCL::SCL>& scl, SCL::tDOType::DA_sequence & daList, vector<string> &path)
 {
-   SCL::tDataTypeTemplates::DAType_sequence daTemplateList = scl->DataTypeTemplates().get().DAType();
+   auto daTemplateList = scl->DataTypeTemplates().get().DAType();
 
-   for (SCL::tDOType::DA_const_iterator da = daList.begin(); da != daList.end(); da++) {
+   for (auto da = daList.begin(); da != daList.end(); da++) {
       string name = da->name();
       string btype = da->bType();
       int count = da->count();
@@ -109,11 +102,10 @@ void parseDA(auto_ptr<SCL::SCL>& scl, SCL::tDOType::DA_sequence & daList, vector
       if (da->type().present()) {
          string type = da->type().get();
 
-         SCL::tDataTypeTemplates::DAType_const_iterator datype;
-         datype = findDAType(daTemplateList, type);
+         auto datype = findDAType(daTemplateList, type);
          if (datype != daTemplateList.end()) {
 
-            SCL::tDAType::BDA_sequence bdaList = datype->BDA();
+            auto bdaList = datype->BDA();
 
             if (count > 0) {
                for (int i = 0; i < count; i++) {
@@ -144,20 +136,19 @@ void parseDA(auto_ptr<SCL::SCL>& scl, SCL::tDOType::DA_sequence & daList, vector
 
 void parseSDO(auto_ptr<SCL::SCL>& scl, SCL::tDOType::SDO_sequence& sdoList, vector<string> &path)
 {
-   SCL::tDataTypeTemplates::DOType_sequence doTemplateList = scl->DataTypeTemplates().get().DOType();
+   auto doTemplateList = scl->DataTypeTemplates().get().DOType();
 
-   for (SCL::tDOType::SDO_const_iterator dot = sdoList.begin(); dot != sdoList.end(); dot++) {
+   for (auto dot = sdoList.begin(); dot != sdoList.end(); dot++) {
       string name = dot->name();
       string type = dot->type();
       
       path.push_back(name);
       print_path(path);
 
-      SCL::tDataTypeTemplates::DOType_const_iterator dotype;
-      dotype = findDOType(doTemplateList, type);
+      auto dotype = findDOType(doTemplateList, type);
       if (dotype != doTemplateList.end()) {
 
-         SCL::tDOType::DA_sequence daList = dotype->DA();
+         auto daList = dotype->DA();
          parseDA(scl, daList,path);
       }
 
@@ -167,9 +158,9 @@ void parseSDO(auto_ptr<SCL::SCL>& scl, SCL::tDOType::SDO_sequence& sdoList, vect
 
 void parseDO(auto_ptr<SCL::SCL>& scl, SCL::tLNodeType::DO_sequence & doList, vector<string> &path)
 {
-   SCL::tDataTypeTemplates::DOType_sequence doTemplateList = scl->DataTypeTemplates().get().DOType();
+   auto doTemplateList = scl->DataTypeTemplates().get().DOType();
 
-   for (SCL::tLNodeType::DO_const_iterator dot = doList.begin(); dot != doList.end(); dot++) {
+   for (auto dot = doList.begin(); dot != doList.end(); dot++) {
       string name = dot->name();
       string type = dot->type();
 
@@ -177,16 +168,15 @@ void parseDO(auto_ptr<SCL::SCL>& scl, SCL::tLNodeType::DO_sequence & doList, vec
 
       print_path(path);
 
-      SCL::tDataTypeTemplates::DOType_const_iterator dotype;
-      dotype = findDOType(doTemplateList, type);
+      auto dotype = findDOType(doTemplateList, type);
       if (dotype != doTemplateList.end()) {
          
          if (!dotype->SDO().empty()) {
-            SCL::tDOType::SDO_sequence sdoList = dotype->SDO();
+            auto sdoList = dotype->SDO();
             parseSDO(scl, sdoList,path);
          }
 
-         SCL::tDOType::DA_sequence daList = dotype->DA();
+         auto daList = dotype->DA();
          parseDA(scl,daList,path);
       }
 
@@ -198,7 +188,7 @@ void parseDO(auto_ptr<SCL::SCL>& scl, SCL::tLNodeType::DO_sequence & doList, vec
 
 void parseInitValue(auto_ptr<SCL::SCL>& scl, SCL::tAnyLN::DOI_sequence &doiList)
 {
-   for (SCL::tAnyLN::DOI_const_iterator doi = doiList.begin(); doi != doiList.end(); doi++) {
+   for (auto doi = doiList.begin(); doi != doiList.end(); doi++) {
       string name = doi->name();
       std::cout << "  init: " << name << std::endl;
    }
@@ -206,9 +196,9 @@ void parseInitValue(auto_ptr<SCL::SCL>& scl, SCL::tAnyLN::DOI_sequence &doiList)
 
 void parseLN(auto_ptr<SCL::SCL> &scl, SCL::tAccessPoint::LN_sequence& lnList, vector<string> &path)
 {
-   SCL::tDataTypeTemplates::LNodeType_sequence lnodeTemplateList = scl->DataTypeTemplates().get().LNodeType();
+   auto lnodeTemplateList = scl->DataTypeTemplates().get().LNodeType();
 
-   for (SCL::tAccessPoint::LN_const_iterator ln = lnList.begin(); ln != lnList.end(); ln++) {
+   for (auto ln = lnList.begin(); ln != lnList.end(); ln++) {
 
       string lnclass = ln->lnClass();
       string lntype = ln->lnType();
@@ -227,11 +217,10 @@ void parseLN(auto_ptr<SCL::SCL> &scl, SCL::tAccessPoint::LN_sequence& lnList, ve
       auto doiList = ln->DOI();
       parseInitValue(scl, doiList);
 
-      SCL::tDataTypeTemplates::LNodeType_const_iterator lnode;
-      lnode = findLNodeType(lnodeTemplateList, lntype);
+      auto lnode = findLNodeType(lnodeTemplateList, lntype);
 
       if (lnode != lnodeTemplateList.end()) {
-         SCL::tLNodeType::DO_sequence doList = lnode->DO();
+         auto doList = lnode->DO();
          parseDO(scl, doList, path);
       }
 
@@ -252,8 +241,6 @@ void parseLN(auto_ptr<SCL::SCL> &scl, SCL::tAccessPoint::LN_sequence& lnList, ve
       path.pop_back();
 
    }
-
-
 }
 
 void parseLN0(auto_ptr<SCL::SCL>& scl, SCL::tLDevice::LN0_type& dev, vector<string>& path)
@@ -313,56 +300,50 @@ int main(int argc, char* argv[])
    try
    {
       auto_ptr<SCL::SCL> scl(SCL::SCL_(file_name, xml_schema::flags::dont_validate));
-
+      
       //std::cout << scl->Header().id() << std::endl;
       //std::cout << scl->Header().nameStructure() << std::endl;
 
-      SCL::tCommunication::SubNetwork_const_iterator it = scl->Communication()->SubNetwork().begin();
+      auto it = scl->Communication()->SubNetwork().begin();
       for (; it != scl->Communication()->SubNetwork().end(); it++) {
          string n = it->name();
 
-         for (SCL::tSubNetwork::ConnectedAP_const_iterator i = it->ConnectedAP().begin(); i != it->ConnectedAP().end(); i++) {
+         for (auto i = it->ConnectedAP().begin(); i != it->ConnectedAP().end(); i++) {
             //std::cout << "apName : " << i->apName() << std::endl;
             //std::cout << "iedName: " << i->iedName() << std::endl;
 
             std::cout << "Address" << std::endl;
-            SCL::tAddress::P_const_iterator piter = i->Address().get().P().begin();
-            for (; piter != i->Address().get().P().end(); piter++) {
-               std::cout << "-" << piter->type() << ": " << piter->data() << std::endl;
+            for (auto it = i->Address().get().P().begin(); it != i->Address().get().P().end(); it++) {
+               std::cout << "-" << it->type() << ": " << it->data() << std::endl;
             }
 
-            for (SCL::tConnectedAP::GSE_const_iterator it = i->GSE().begin(); it != i->GSE().end(); it++) {
+            for (auto it = i->GSE().begin(); it != i->GSE().end(); it++) {
                string ldinst = it->ldInst();
                string cbname = it->cbName();
 
                std::cout << "GSE: " << ldinst << ";" << cbname << std::endl;
-               for (SCL::tAddress::P_const_iterator piter = it->Address().get().P().begin(); piter != it->Address().get().P().end(); piter++) {
+               for (auto piter = it->Address().get().P().begin(); piter != it->Address().get().P().end(); piter++) {
                   std::cout << "-" << piter->type() << ": " << piter->data() << std::endl;
                }
             }
          }
       }
 
-      for (SCL::SCL::IED_const_iterator i(scl->IED().begin()); i != scl->IED().end(); i++) {
-
-         SCL::tIED ied = ((SCL::tIED) * i);
+      for(auto ied = scl->IED().begin(); ied != scl->IED().end(); ied++){
 
          std::cout << "--------------DEVICE------------------" << std::endl;
-         std::cout << "  name        : " << ied.name() << std::endl;
-         std::cout << "  manufacturer:" << ied.manufacturer() << std::endl;
-         std::cout << "  desc        : " << ied.desc() << std::endl;
-         std::cout << "  type        : " << ied.type() << std::endl;
+         std::cout << "  name        : " << ied->name() << std::endl;
+         std::cout << "  manufacturer:" << ied->manufacturer() << std::endl;
+         std::cout << "  desc        : " << ied->desc() << std::endl;
+         std::cout << "  type        : " << ied->type() << std::endl;
 
-         SCL::tIED::AccessPoint_const_iterator ap = SCL::tIED::AccessPoint_const_iterator(ied.AccessPoint().begin());
-         for ( ; ap != ied.AccessPoint().end(); ap++)
-         {
-            //std::cout << "access point: " << ap->name() << std::endl;
+         for (auto ap = ied->AccessPoint().begin() ; ap != ied->AccessPoint().end(); ap++){
 
-            SCL::tServer::LDevice_sequence devList = ap->Server().get().LDevice();
-            SCL::tServer::LDevice_const_iterator dev = devList.begin();
+            auto devList = ap->Server().get().LDevice();
+            auto dev = devList.begin();
             for (; dev != devList.end(); dev++) {
 
-               string ldName = ied.name() + dev->inst();
+               string ldName = ied->name() + dev->inst();
 
                vector<string> path;
 
@@ -373,9 +354,7 @@ int main(int argc, char* argv[])
                auto ln0 = dev->LN0();
                parseLN0(scl, ln0, path);
 
-
-               
-               SCL::tAccessPoint::LN_sequence lnList = dev->LN();
+               auto lnList = dev->LN();
                parseLN(scl,lnList,path);
 
                path.pop_back();
