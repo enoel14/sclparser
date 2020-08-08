@@ -196,6 +196,14 @@ void parseDO(auto_ptr<SCL::SCL>& scl, SCL::tLNodeType::DO_sequence & doList, vec
 
 }
 
+void parseInitValue(auto_ptr<SCL::SCL>& scl, SCL::tAnyLN::DOI_sequence &doiList)
+{
+   for (SCL::tAnyLN::DOI_const_iterator doi = doiList.begin(); doi != doiList.end(); doi++) {
+      string name = doi->name();
+      std::cout << "  init: " << name << std::endl;
+   }
+}
+
 void parseLN(auto_ptr<SCL::SCL> &scl, SCL::tAccessPoint::LN_sequence& lnList, vector<string> &path)
 {
    SCL::tDataTypeTemplates::LNodeType_sequence lnodeTemplateList = scl->DataTypeTemplates().get().LNodeType();
@@ -216,10 +224,8 @@ void parseLN(auto_ptr<SCL::SCL> &scl, SCL::tAccessPoint::LN_sequence& lnList, ve
       print_path(path);
 
       //parse init value
-      //SCL::tAnyLN::DOI_sequence doiList = ln->DOI();
-      //for (SCL::tAnyLN::DOI_const_iterator doi = doiList.begin(); doi != doiList.end(); doi++) {
-      //   doi->name();
-      //}
+      auto doiList = ln->DOI();
+      parseInitValue(scl, doiList);
 
       SCL::tDataTypeTemplates::LNodeType_const_iterator lnode;
       lnode = findLNodeType(lnodeTemplateList, lntype);
@@ -229,10 +235,65 @@ void parseLN(auto_ptr<SCL::SCL> &scl, SCL::tAccessPoint::LN_sequence& lnList, ve
          parseDO(scl, doList, path);
       }
 
+      //parse dataset
+      auto dsList = ln->DataSet();
+      auto ds = dsList.begin();
+      for (; ds != dsList.end(); ds++) {
+         std::cout << "+dataset: " << ds->name() << std::endl;
+      }
+
+      //parse report control block
+      auto rpList = ln->ReportControl();
+      auto rp = rpList.begin();
+      for (; rp != rpList.end(); rp++) {
+         std::cout << "+report: " << rp->name() << " dataset: " << rp->datSet() << std::endl;
+      }
+
       path.pop_back();
 
    }
 
+
+}
+
+void parseLN0(auto_ptr<SCL::SCL>& scl, SCL::tLDevice::LN0_type& dev, vector<string>& path)
+{
+   string ln0Type = dev.lnType();
+   string ln0Class = dev.lnClass();
+
+   path.push_back(ln0Class);
+
+   print_path(path);
+
+   //parse init value
+   auto doiList = dev.DOI();
+   parseInitValue(scl, doiList);
+
+
+   auto lnodeTemplateList = scl->DataTypeTemplates().get().LNodeType();
+   auto lnode = findLNodeType(lnodeTemplateList, ln0Type);
+
+   if (lnode != lnodeTemplateList.end()) {
+      auto doList = lnode->DO();
+      parseDO(scl, doList, path);
+
+   }
+
+   //parse dataset
+   auto dsList = dev.DataSet();
+   auto ds = dsList.begin();
+   for (; ds != dsList.end(); ds++) {
+      std::cout << "+dataset: " << ds->name() << std::endl;
+   }
+
+   //parse report control block
+   auto rpList = dev.ReportControl();
+   auto rp = rpList.begin();
+   for (; rp != rpList.end(); rp++) {
+      std::cout << "+report: " << rp->name() << " dataset: " << rp->datSet() << std::endl;
+   }
+
+   path.pop_back();
 
 }
 
@@ -307,24 +368,16 @@ int main(int argc, char* argv[])
 
                std::cout << "LD: " << ldName << std::endl;
 
-               //parse dataset
-               SCL::tAnyLN::DataSet_sequence dsList = dev->LN0().DataSet();
-               SCL::tAnyLN::DataSet_const_iterator ds = dsList.begin();
-               for (; ds != dsList.end(); ds++) {
-                  std::cout << "+dataset: " << ds->name() << std::endl;
-               }
+               path.push_back(ldName);
 
-               //parse report control block
-               SCL::tAnyLN::ReportControl_sequence rpList = dev->LN0().ReportControl();
-               SCL::tAnyLN::ReportControl_const_iterator rp = rpList.begin();
-               for (; rp != rpList.end(); rp++) {
-                  std::cout << "+report: " << rp->name() << " dataset: " << rp->datSet() << std::endl;
-               }
+               auto ln0 = dev->LN0();
+               parseLN0(scl, ln0, path);
+
+
                
                SCL::tAccessPoint::LN_sequence lnList = dev->LN();
-
-               path.push_back(ldName);
                parseLN(scl,lnList,path);
+
                path.pop_back();
           
             }
