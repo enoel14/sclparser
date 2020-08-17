@@ -450,7 +450,6 @@ void parseLN(auto_ptr<SCL::SCL> &scl, SCL::tAccessPoint::LN_sequence& lnList, ve
    }
 }
 
-//void parseLN0(auto_ptr<SCL::SCL>& scl, SCL::tLDevice::LN0_type& dev, vector<string>& path)
 void parseLN0(auto_ptr<SCL::SCL>& scl, SCL::tServer::LDevice_const_iterator  dev, vector<string>& path, string iedname)
 {
    auto ln0 = dev->LN0();
